@@ -1,98 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        .header {
-            text-align: center;
-            padding: 50px 0;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 2.5em;
-        }
-        .forms {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 50px;
-        }
-        .form-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 45%;
-        }
-        .form-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .form-container form {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-container form input {
-            margin-bottom: 15px;
-            padding: 10px;
-            font-size: 1em;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        .form-container form button {
-            padding: 10px;
-            font-size: 1em;
-            color: #fff;
-            background-color: #007BFF;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .form-container form button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Bienvenido a Nuestra Landing Page</h1>
-            <p>Regístrate o inicia sesión para continuar</p>
-        </div>
-        <div class="forms">
-            <!-- Formulario de Registro -->
-            <div class="form-container">
-                <h2>Registro</h2>
-                <form action="register.php" method="POST">
-                    <input type="text" name="name" placeholder="Nombre completo" required>
-                    <input type="email" name="email" placeholder="Correo electrónico" required>
-                    <input type="password" name="password" placeholder="Contraseña" required>
-                    <button type="submit">Registrarse</button>
-                </form>
+<?php
+// index.php
+session_start();
+
+// Incluir el archivo de conexión
+require_once 'config/conexion.php';
+
+// Comprobar si ya hay una sesión iniciada
+if (isset($_SESSION['usuario_id'])) {
+    // Redireccionar según el rol
+    if ($_SESSION['usuario_rol'] === 'admin') {
+        header('Location: gestionfichadas.php');
+        exit;
+    } else {
+        header('Location: fichar.php');
+        exit;
+    }
+}
+
+// Incluir el header
+include_once 'includes/header.php';
+?>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary-dark text-white text-center">
+                <h4 class="my-0">Iniciar Sesión</h4>
             </div>
-            <!-- Formulario de Inicio de Sesión -->
-            <div class="form-container">
-                <h2>Inicio de Sesión</h2>
+            <div class="card-body p-4">
+                <?php
+                // Mostrar mensaje de error si existe
+                if (isset($_GET['error'])) {
+                    echo '<div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>' . htmlspecialchars($_GET['error']) . '
+                    </div>';
+                }
+                ?>
+                
                 <form action="login.php" method="POST">
-                    <input type="email" name="email" placeholder="Correo electrónico" required>
-                    <input type="password" name="password" placeholder="Contraseña" required>
-                    <button type="submit">Iniciar Sesión</button>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                placeholder="usuario@ejemplo.com" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Contraseña</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                placeholder="Tu contraseña" required>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+
+<?php
+// Incluir el footer
+include_once 'includes/footer.php';
+?>
